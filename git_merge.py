@@ -1,11 +1,14 @@
 import requests
 import time
+import os
 
 # Replace with your GitHub personal access token
-token = ''
+token = os.getenv('GITHUB_TOKEN')
 
-# List of pull request URLs
-pull_request_urls = []
+# Read the pull request URLs from a file
+with open('pull_request_urls.txt', 'r') as file:
+    pull_request_urls = [line.strip() for line in file.readlines()]
+
 
 # Headers with authentication
 headers = {
@@ -19,7 +22,8 @@ def add_review(pull_url, event):
     owner, repo, pull_number = parts[3], parts[4], parts[6]
     review_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pull_number}/reviews'
     review_data = {
-        "event": event
+        "event": event,
+        "body": "LGTM"
     }
     response = requests.post(review_url, json=review_data, headers=headers)
     return response
